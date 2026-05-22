@@ -33,9 +33,11 @@ Create `.env` on the server from `.env.example` and fill:
 - `DB_DATABASE`
 - `DB_USERNAME`
 - `DB_PASSWORD`
+- `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD` when using the bundled `postgres` profile
 - `REDIS_HOST`
 - `MAIL_*`
 - `KAFKA_*`
+- `HTTP_PORT`, for example `127.0.0.1:8080` when HTTPS is handled by a host reverse proxy
 - `APP_IMAGE`
 - `NGINX_IMAGE`
 - `IMAGE_TAG`

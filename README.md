@@ -13,6 +13,13 @@ The repository contains infrastructure files only. Install OctoberCMS in your pr
 - Composer authentication through BuildKit secrets
 - Production PHP, OPcache and Nginx configuration
 
+## Documentation
+
+- [Installing OctoberCMS With This Kit](docs/install-october.md)
+- [Production Deployment](docs/production-deploy.md)
+- [CI/CD Notes](docs/ci-cd.md)
+- [Debian 12 VPS Deployment](docs/debian-12-vps.md)
+
 ## Quick Start
 
 Create or open an OctoberCMS v4 project:
