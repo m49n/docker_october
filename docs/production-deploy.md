@@ -24,7 +24,18 @@ docker push registry.example.com/project/october-nginx:$IMAGE_TAG
 
 ## Runtime Env
 
-Create `.env` on the server from `.env.example` and fill:
+`.env.example` is the contract for required runtime variables. Do not commit real values.
+
+For a simple single-server VPS, create `.env` on the server from `.env.example`, restrict file permissions and fill the values:
+
+```bash
+cp .env.example .env
+chmod 600 .env
+```
+
+For Kubernetes, BeCloud-like platforms, Docker Swarm or a Vault-based setup, do not rely on a project `.env` file. Store secrets in the platform secret manager or Vault and inject them into the app, queue and scheduler containers at runtime.
+
+Required values:
 
 - `APP_KEY`
 - `APP_URL`
