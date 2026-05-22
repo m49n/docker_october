@@ -142,6 +142,7 @@ Use the bundled `postgres` service for a single-server deployment, staging or de
 - Do not run migrations automatically in every container.
 - Use Redis for cache, sessions and queue in multi-container deployments.
 - Use S3 or MinIO for media when running more than one host. A named Docker volume is acceptable only for a single-server deployment.
+- Default PHP limits are conservative: `memory_limit=128M`, `upload_max_filesize=32M`, `post_max_size=40M`. Raise them per project when imports, media handling or heavy backend operations need more headroom.
 
 ## Verification
 
