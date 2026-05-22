@@ -114,6 +114,25 @@ Run with optional PostgreSQL:
 docker compose -f docker-compose.prod.yml --profile local-db up -d
 ```
 
+With this profile enabled, PostgreSQL runs as a separate container in the same Docker network. All scaled app containers connect to the same database service by using the service name as the host:
+
+```env
+DB_CONNECTION=pgsql
+DB_HOST=postgres
+DB_PORT=5432
+DB_DATABASE=october
+DB_USERNAME=october
+DB_PASSWORD=change-me
+```
+
+This works for `php-fpm`, `queue` and `scheduler`, including when `php-fpm` or `queue` are scaled:
+
+```bash
+docker compose -f docker-compose.prod.yml --profile local-db up -d --scale php-fpm=3 --scale queue=3
+```
+
+Use the bundled `postgres` service for a single-server deployment, staging or demos. For multi-server production, use an external PostgreSQL server or managed database and set `DB_HOST` to that external host instead.
+
 ## Production Notes
 
 - Do not commit `.env` or `auth.json`.
