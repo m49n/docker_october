@@ -1,0 +1,70 @@
+name: october-production
+
+x-app-image: &app-image ${APP_IMAGE:-registry.example.com/project/october-app}:${IMAGE_TAG:-latest}
+x-nginx-image: &nginx-image ${NGINX_IMAGE:-registry.example.com/project/october-nginx}:${IMAGE_TAG:-latest}
+
+x-app-service: &app-service
+  image: *app-image
+  env_file:
+    - .env
+  depends_on:
+    redis:
+      condition: service_healthy
+  restart: unless-stopped
+  volumes:
+    - storage-app:/var/www/html/storage/app
+
+services:
+  nginx:
+    image: *nginx-image
+    depends_on:
+      php-fpm:
+        condition: service_started
+    ports:
+      - "${HTTP_PORT:-80}:80"
+    restart: unless-stopped
+
+  php-fpm:
+    <<: *app-service
+
+  queue:
+    <<: *app-service
+    command: php artisan queue:work redis --sleep=3 --tries=3 --timeout=120
+
+  scheduler:
+    <<: *app-service
+    command: php artisan schedule:work
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    profiles:
+      - local-db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-october}
+      POSTGRES_USER: ${POSTGRES_USER:-october}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  redis-data:
+  storage-app:
+  postgres-data:

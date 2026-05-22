@@ -1,0 +1,8 @@
+{
+  "http-basic": {
+    "gateway.octobercms.com": {
+      "username": "account@example.com",
+      "password": "october-license-key"
+    }
+  }
+}
