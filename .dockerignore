@@ -30,3 +30,4 @@ docker-compose*.yml
 README.md
 docs
 scripts/deploy.sh
+scripts/update-kit.sh

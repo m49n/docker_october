@@ -20,6 +20,7 @@ The repository contains infrastructure files only. Install OctoberCMS in your pr
 - [Installing OctoberCMS With This Kit](docs/install-october.md)
 - [Production Deployment](docs/production-deploy.md)
 - [Runtime Secrets](docs/runtime-secrets.md)
+- [Updating The Docker Kit](docs/update-kit.md)
 - [CI/CD Notes](docs/ci-cd.md)
 - [Debian 12 VPS Deployment](docs/debian-12-vps.md)
 
@@ -170,6 +171,18 @@ RUN_OPTIMIZE=1 ./scripts/deploy.sh
 ```
 
 The script starts infrastructure services, runs `october:migrate --force`, optionally runs Laravel migrations and `artisan optimize`, signals queue and scheduler workers, then updates containers.
+
+## Updating This Kit In Projects
+
+When this template receives global improvements, update client projects with:
+
+```bash
+./scripts/update-kit.sh
+git diff
+git commit -m "Update production Docker kit"
+```
+
+See [Updating The Docker Kit](docs/update-kit.md) for safe defaults and overwrite options.
 
 ## Production Notes
 
