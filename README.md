@@ -20,6 +20,7 @@ The repository contains infrastructure files only. Install OctoberCMS in your pr
 - [Installing OctoberCMS With This Kit](docs/install-october.md)
 - [Production Deployment](docs/production-deploy.md)
 - [Runtime Secrets](docs/runtime-secrets.md)
+- [Backup And Restore](docs/backup-restore.md)
 - [Updating The Docker Kit](docs/update-kit.md)
 - [CI/CD Notes](docs/ci-cd.md)
 - [Debian 12 VPS Deployment](docs/debian-12-vps.md)
@@ -187,6 +188,7 @@ See [Updating The Docker Kit](docs/update-kit.md) for safe defaults and overwrit
 ## Production Notes
 
 - Do not commit `.env` or `auth.json`.
+- Test restore before treating the deployment as production-ready. See [Backup And Restore](docs/backup-restore.md).
 - Treat `.env.example` as the runtime configuration contract, not as a requirement to store production secrets in a file.
 - For a simple single-server VPS, a server-side `.env` file is acceptable when permissions are restricted with `chmod 600 .env`.
 - For orchestrators such as Kubernetes, BeCloud-like platforms or Docker Swarm, store runtime values in platform Secrets/ConfigMaps or Vault and inject them into containers at runtime.

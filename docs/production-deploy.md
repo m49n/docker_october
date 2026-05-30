@@ -115,6 +115,8 @@ For multi-host production, use S3 or MinIO for uploads and media. Do not rely on
 
 The compose file mounts `storage-app` read-only into `nginx`, so local public media can be served directly by nginx on a single server.
 
+Before going live, configure and test backups for PostgreSQL, `storage-app` and runtime secrets. See [Backup And Restore](backup-restore.md).
+
 ## Health And Logs
 
 The compose file includes healthchecks for `nginx`, `php-fpm`, `redis` and bundled `postgres`.
