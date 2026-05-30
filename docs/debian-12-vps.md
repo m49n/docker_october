@@ -271,6 +271,13 @@ docker compose -f docker-compose.prod.yml run --rm php-fpm php artisan migrate -
 
 Run these commands as explicit deploy steps. Do not run migrations automatically from every web container.
 
+Or use the deploy helper after images are built:
+
+```bash
+chmod +x scripts/deploy.sh
+DEPLOY_PULL=0 USE_LOCAL_DB=1 ./scripts/deploy.sh
+```
+
 ## 10. Open The Site
 
 Check locally from the server:
@@ -306,8 +313,7 @@ DOCKER_BUILDKIT=1 docker build \
   -t october-nginx:$IMAGE_TAG .
 
 sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=$IMAGE_TAG/" .env
-docker compose -f docker-compose.prod.yml --profile local-db up -d
-docker compose -f docker-compose.prod.yml run --rm php-fpm php artisan october:migrate --force
+DEPLOY_PULL=0 USE_LOCAL_DB=1 ./scripts/deploy.sh
 ```
 
 Recommended production flow:

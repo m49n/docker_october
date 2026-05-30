@@ -67,5 +67,6 @@ jobs:
 2. Build `nginx` image from the same source revision.
 3. Push both images.
 4. Pull on the server.
-5. Start or update containers.
-6. Run `october:migrate --force` explicitly.
+5. Run `./scripts/deploy.sh` on the server.
+
+The helper script runs `october:migrate --force` explicitly, signals queue and scheduler workers, then updates containers.

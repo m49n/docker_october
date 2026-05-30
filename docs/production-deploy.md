@@ -55,6 +55,36 @@ Required values:
 
 ## Deploy
 
+Using the helper script:
+
+```bash
+chmod +x scripts/deploy.sh
+./scripts/deploy.sh
+```
+
+For a local VPS build where images were built on the server and PostgreSQL is bundled:
+
+```bash
+DEPLOY_PULL=0 USE_LOCAL_DB=1 ./scripts/deploy.sh
+```
+
+For registry-based deployment with external PostgreSQL:
+
+```bash
+./scripts/deploy.sh
+```
+
+Useful flags:
+
+```bash
+DEPLOY_PULL=0                 # skip docker compose pull, use local images
+USE_LOCAL_DB=1                # enable the bundled postgres compose profile
+RUN_LARAVEL_MIGRATIONS=1      # also run php artisan migrate --force
+RUN_OPTIMIZE=1                # also run php artisan optimize
+```
+
+Manual equivalent:
+
 ```bash
 docker compose -f docker-compose.prod.yml pull
 docker compose -f docker-compose.prod.yml up -d
@@ -82,3 +112,19 @@ Do not scale `scheduler`. It must run as a single container. For critical schedu
 For a single server, the `storage-app` named volume preserves `storage/app`.
 
 For multi-host production, use S3 or MinIO for uploads and media. Do not rely on a local container filesystem for `storage/app/uploads` or `storage/app/media`.
+
+The compose file mounts `storage-app` read-only into `nginx`, so local public media can be served directly by nginx on a single server.
+
+## Health And Logs
+
+The compose file includes healthchecks for `nginx`, `php-fpm`, `redis` and bundled `postgres`.
+
+Docker logs use the `local` logging driver with rotation:
+
+```yaml
+logging:
+  driver: local
+  options:
+    max-size: "10m"
+    max-file: "3"
+```

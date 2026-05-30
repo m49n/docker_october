@@ -12,6 +12,8 @@ The repository contains infrastructure files only. Install OctoberCMS in your pr
 - Optional PostgreSQL service for single-server or staging deployments
 - Composer authentication through BuildKit secrets
 - Production PHP, OPcache and Nginx configuration
+- Nginx hardening for root-based OctoberCMS deployments without requiring `public/` mirror
+- Healthchecks, Docker log rotation and a deploy helper script
 
 ## Documentation
 
@@ -80,6 +82,12 @@ Run migrations as an explicit deploy step:
 docker compose -f docker-compose.prod.yml run --rm php-fpm php artisan october:migrate --force
 ```
 
+Or run the deploy helper after images are built:
+
+```bash
+DEPLOY_PULL=0 USE_LOCAL_DB=1 ./scripts/deploy.sh
+```
+
 ## CI/CD Build
 
 Use a CI secret named `COMPOSER_AUTH` containing the JSON from `auth.json.example`.
@@ -141,6 +149,28 @@ docker compose -f docker-compose.prod.yml --profile local-db up -d --scale php-f
 
 Use the bundled `postgres` service for a single-server deployment, staging or demos. For multi-server production, use an external PostgreSQL server or managed database and set `DB_HOST` to that external host instead.
 
+The shared `storage-app` volume is mounted into `php-fpm`, `queue`, `scheduler` and read-only into `nginx`. This lets nginx serve local public media paths such as `/storage/app/media` on a single server. For multi-host production, use S3 or MinIO instead of local storage.
+
+## Deploy Helper
+
+The repository includes `scripts/deploy.sh` for single-host Docker Compose deployments:
+
+```bash
+chmod +x scripts/deploy.sh
+./scripts/deploy.sh
+```
+
+Useful options:
+
+```bash
+DEPLOY_PULL=0 ./scripts/deploy.sh          # use locally built images
+USE_LOCAL_DB=1 ./scripts/deploy.sh         # include the bundled postgres profile
+RUN_LARAVEL_MIGRATIONS=1 ./scripts/deploy.sh
+RUN_OPTIMIZE=1 ./scripts/deploy.sh
+```
+
+The script starts infrastructure services, runs `october:migrate --force`, optionally runs Laravel migrations and `artisan optimize`, signals queue and scheduler workers, then updates containers.
+
 ## Production Notes
 
 - Do not commit `.env` or `auth.json`.
@@ -154,6 +184,7 @@ Use the bundled `postgres` service for a single-server deployment, staging or de
 - Use Redis for cache, sessions and queue in multi-container deployments.
 - Use S3 or MinIO for media when running more than one host. A named Docker volume is acceptable only for a single-server deployment.
 - Default PHP limits are conservative: `memory_limit=128M`, `upload_max_filesize=32M`, `post_max_size=40M`. Raise them per project when imports, media handling or heavy backend operations need more headroom.
+- Nginx keeps `root /var/www/html` for compatibility, but denies root-sensitive files and internal October/Laravel directories. For stricter deployments, migrate projects to October's `public/` mirror model separately.
 
 ## Verification
 

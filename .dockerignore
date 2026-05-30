@@ -12,7 +12,6 @@ vendor
 !.env.example
 auth.json
 auth.json.*
-!auth.json.example
 
 storage/logs/*
 storage/framework/cache/*
@@ -30,3 +29,4 @@ Thumbs.db
 docker-compose*.yml
 README.md
 docs
+scripts/deploy.sh
