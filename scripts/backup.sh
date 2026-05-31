@@ -56,7 +56,7 @@ prune_backup_pattern() {
 
     # shellcheck disable=SC2086
     set -- "$BACKUP_DIR"/$pattern
-    [ -e "$1" ] || return
+    [ -e "$1" ] || return 0
 
     # shellcheck disable=SC2086
     ls -1t "$BACKUP_DIR"/$pattern | awk -v keep="$BACKUP_RETENTION_COUNT" 'NR > keep' | while IFS= read -r old_file; do

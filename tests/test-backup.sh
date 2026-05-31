@@ -129,4 +129,25 @@ assert_file_contains "$DOCKER_STUB_LOG" "docker run --rm -v october-production_s
 assert_file_contains "$DOCKER_STUB_LOG" "chown"
 assert_file_contains /tmp/backup.out "Backup complete: fixedtag"
 
+no_secrets_backup_dir="$tmp_dir/no-secrets-backups"
+mkdir -p "$no_secrets_backup_dir"
+export BACKUP_DIR="$no_secrets_backup_dir"
+export BACKUP_TAG="nosecretstag"
+export BACKUP_INCLUDE_SECRETS=0
+export BACKUP_RETENTION_COUNT=1
+
+printf 'OLD' > "$no_secrets_backup_dir/postgres-old.dump"
+printf 'OLD' > "$no_secrets_backup_dir/storage-app-old.tar.gz"
+printf 'OLD' > "$no_secrets_backup_dir/metadata-old.txt"
+
+./scripts/backup.sh >/tmp/backup-no-secrets.out
+
+test -s "$no_secrets_backup_dir/postgres-nosecretstag.dump" || fail "postgres dump without secrets was not created"
+test -s "$no_secrets_backup_dir/storage-app-nosecretstag.tar.gz" || fail "storage archive without secrets was not created"
+test -s "$no_secrets_backup_dir/metadata-nosecretstag.txt" || fail "metadata without secrets was not created"
+test ! -e "$no_secrets_backup_dir/postgres-old.dump" || fail "old postgres backup without secrets was not pruned"
+test ! -e "$no_secrets_backup_dir/storage-app-old.tar.gz" || fail "old storage backup without secrets was not pruned"
+test ! -e "$no_secrets_backup_dir/metadata-old.txt" || fail "old metadata backup without secrets was not pruned"
+assert_file_contains /tmp/backup-no-secrets.out "Backup complete: nosecretstag"
+
 echo "backup tests passed"
