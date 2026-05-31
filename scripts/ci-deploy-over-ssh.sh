@@ -14,9 +14,9 @@ DEPLOY_STRICT_HOST_KEY_CHECKING="${DEPLOY_STRICT_HOST_KEY_CHECKING:-accept-new}"
 DEPLOY_COMPOSE_FILE="${DEPLOY_COMPOSE_FILE:-docker-compose.prod.yml}"
 DEPLOY_BUILD_SECRET_FILE="${DEPLOY_BUILD_SECRET_FILE:-auth.json}"
 
-PROJECT_NAME="${BITBUCKET_REPO_FULL_NAME:-${CI_PROJECT_NAME:-october-project}}"
+PROJECT_NAME="${BITBUCKET_REPO_FULL_NAME:-${CI_PROJECT_PATH:-${CI_PROJECT_NAME:-october-project}}}"
 COMMIT_SHA="${BITBUCKET_COMMIT:-${CI_COMMIT_SHA:-unknown}}"
-BRANCH_NAME="${BITBUCKET_BRANCH:-${DEPLOY_BRANCH}}"
+BRANCH_NAME="${BITBUCKET_BRANCH:-${CI_COMMIT_BRANCH:-${DEPLOY_BRANCH}}}"
 
 notify() {
     if [ -x scripts/telegram-notify.sh ]; then
@@ -37,13 +37,27 @@ chmod 700 "$ssh_dir"
 
 ssh_opts="-p ${DEPLOY_PORT} -o BatchMode=yes -o StrictHostKeyChecking=${DEPLOY_STRICT_HOST_KEY_CHECKING}"
 
-if [ -n "${DEPLOY_KNOWN_HOSTS:-}" ]; then
+if [ -n "${DEPLOY_KNOWN_HOSTS_FILE:-}" ] && [ -f "$DEPLOY_KNOWN_HOSTS_FILE" ]; then
+    cp "$DEPLOY_KNOWN_HOSTS_FILE" "$ssh_dir/known_hosts"
+    chmod 600 "$ssh_dir/known_hosts"
+    ssh_opts="$ssh_opts -o UserKnownHostsFile=$ssh_dir/known_hosts"
+elif [ -n "${SSH_KNOWN_HOSTS:-}" ] && [ -f "$SSH_KNOWN_HOSTS" ]; then
+    cp "$SSH_KNOWN_HOSTS" "$ssh_dir/known_hosts"
+    chmod 600 "$ssh_dir/known_hosts"
+    ssh_opts="$ssh_opts -o UserKnownHostsFile=$ssh_dir/known_hosts"
+elif [ -n "${DEPLOY_KNOWN_HOSTS:-}" ]; then
     printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > "$ssh_dir/known_hosts"
     chmod 600 "$ssh_dir/known_hosts"
     ssh_opts="$ssh_opts -o UserKnownHostsFile=$ssh_dir/known_hosts"
 fi
 
-if [ -n "${DEPLOY_SSH_PRIVATE_KEY:-}" ]; then
+if [ -n "${DEPLOY_SSH_PRIVATE_KEY_FILE:-}" ] && [ -f "$DEPLOY_SSH_PRIVATE_KEY_FILE" ]; then
+    chmod 600 "$DEPLOY_SSH_PRIVATE_KEY_FILE"
+    ssh_opts="$ssh_opts -i $DEPLOY_SSH_PRIVATE_KEY_FILE"
+elif [ -n "${SSH_PRIVATE_KEY:-}" ] && [ -f "$SSH_PRIVATE_KEY" ]; then
+    chmod 600 "$SSH_PRIVATE_KEY"
+    ssh_opts="$ssh_opts -i $SSH_PRIVATE_KEY"
+elif [ -n "${DEPLOY_SSH_PRIVATE_KEY:-}" ]; then
     tmp_key="$ssh_dir/deploy_key"
     printf '%s\n' "$DEPLOY_SSH_PRIVATE_KEY" > "$tmp_key"
     chmod 600 "$tmp_key"

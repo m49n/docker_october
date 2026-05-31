@@ -24,6 +24,7 @@ The repository contains infrastructure files only. Install OctoberCMS in your pr
 - [Updating The Docker Kit](docs/update-kit.md)
 - [CI/CD Notes](docs/ci-cd.md)
 - [Bitbucket Pipelines Deployment](docs/ci-cd-bitbucket.md)
+- [GitLab CI/CD Deployment](docs/ci-cd-gitlab.md)
 - [Debian 12 VPS Deployment](docs/debian-12-vps.md)
 
 ## Quick Start

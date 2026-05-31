@@ -75,6 +75,7 @@ copy_file docker-compose.prod.yml docker-compose.prod.yml
 copy_file .dockerignore .dockerignore
 copy_file .gitattributes .gitattributes
 copy_file auth.json.example auth.json.example
+copy_file gitlab-ci.example.yml gitlab-ci.example.yml
 
 if [ "$OVERWRITE_BITBUCKET_PIPELINE" = "1" ] || [ ! -f bitbucket-pipelines.yml ]; then
     copy_file bitbucket-pipelines.yml bitbucket-pipelines.yml

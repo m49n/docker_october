@@ -16,6 +16,10 @@ Example `COMPOSER_AUTH` value:
 
 For the single-server flow used by this kit, see [Bitbucket Pipelines Deployment](ci-cd-bitbucket.md). It deploys over SSH, builds images on the server and sends Telegram notifications.
 
+## GitLab CI/CD
+
+For the same single-server SSH flow in GitLab, see [GitLab CI/CD Deployment](ci-cd-gitlab.md). Copy `gitlab-ci.example.yml` to `.gitlab-ci.yml`, configure protected CI/CD variables and let GitLab connect to the server over SSH.
+
 ## GitHub Actions Sketch
 
 ```yaml

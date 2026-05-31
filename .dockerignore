@@ -27,6 +27,9 @@ storage/cms/twig/*
 Thumbs.db
 
 docker-compose*.yml
+bitbucket-pipelines.yml
+gitlab-ci.example.yml
+.gitlab-ci.yml
 README.md
 docs
 scripts/deploy.sh
