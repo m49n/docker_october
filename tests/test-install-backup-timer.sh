@@ -42,6 +42,14 @@ printf '%s\n' "systemctl $*" >> "$SYSTEMCTL_STUB_LOG"
 SH
 chmod +x "$bin_dir/systemctl"
 
+cat > "$bin_dir/sudo" <<'SH'
+#!/usr/bin/env sh
+set -eu
+printf '%s\n' "sudo $*" >> "$SUDO_STUB_LOG"
+exec "$@"
+SH
+chmod +x "$bin_dir/sudo"
+
 export PATH="$bin_dir:$PATH"
 export SYSTEMCTL_STUB_LOG="$tmp_dir/systemctl.log"
 export SYSTEMD_DIR="$systemd_dir"
@@ -79,5 +87,23 @@ assert_contains "$timer_file" "Unit=october-test-backup.service"
 assert_contains "$SYSTEMCTL_STUB_LOG" "systemctl daemon-reload"
 assert_contains "$SYSTEMCTL_STUB_LOG" "systemctl enable --now october-test-backup.timer"
 assert_contains /tmp/install-backup-timer.out "Installed october-test-backup.timer"
+
+sudo_systemd_dir="$tmp_dir/sudo-systemd"
+sudo_backup_dir="$tmp_dir/sudo-backups"
+mkdir -p "$sudo_systemd_dir"
+: > "$SYSTEMCTL_STUB_LOG"
+export SUDO_STUB_LOG="$tmp_dir/sudo.log"
+export SYSTEMD_DIR="$sudo_systemd_dir"
+export BACKUP_DIR="$sudo_backup_dir"
+export BACKUP_UNIT_NAME="october-sudo-backup"
+export SYSTEMCTL_USE_SUDO="1"
+
+./scripts/install-backup-timer.sh >/tmp/install-backup-timer-sudo.out
+
+assert_contains "$SUDO_STUB_LOG" "sudo systemctl daemon-reload"
+assert_contains "$SUDO_STUB_LOG" "sudo systemctl enable --now october-sudo-backup.timer"
+assert_contains "$SYSTEMCTL_STUB_LOG" "systemctl daemon-reload"
+assert_contains "$SYSTEMCTL_STUB_LOG" "systemctl enable --now october-sudo-backup.timer"
+assert_contains /tmp/install-backup-timer-sudo.out "Installed october-sudo-backup.timer"
 
 echo "install backup timer tests passed"

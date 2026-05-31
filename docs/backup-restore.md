@@ -70,6 +70,8 @@ cd /opt/october/app
 BACKUP_DIR=/var/backups/october ./scripts/install-backup-timer.sh
 ```
 
+With the default `/etc/systemd/system` target the installer uses `sudo` for systemd writes and `systemctl`. The generated service runs as the current user unless `BACKUP_USER` and `BACKUP_GROUP` are set.
+
 Defaults:
 
 - service: `october-backup.service`
@@ -92,13 +94,13 @@ Check the timer:
 ```bash
 systemctl list-timers october-backup.timer
 systemctl status october-backup.timer
-journalctl -u october-backup.service -n 100 --no-pager
+sudo journalctl -u october-backup.service -n 100 --no-pager
 ```
 
 Run a manual timer job:
 
 ```bash
-systemctl start october-backup.service
+sudo systemctl start october-backup.service
 ```
 
 ## PostgreSQL Backup

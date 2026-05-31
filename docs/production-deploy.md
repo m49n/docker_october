@@ -143,6 +143,8 @@ Install the daily systemd backup timer:
 BACKUP_DIR=/var/backups/october ./scripts/install-backup-timer.sh
 ```
 
+With the default `/etc/systemd/system` target the installer uses `sudo` for systemd writes and `systemctl`. The generated service still runs as the current user unless `BACKUP_USER` and `BACKUP_GROUP` are set.
+
 ## Health And Logs
 
 The compose file includes healthchecks for `nginx`, `php-fpm`, `redis` and bundled `postgres`.

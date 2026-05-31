@@ -120,18 +120,20 @@ Install the daily backup timer:
 BACKUP_DIR=/var/backups/october ./scripts/install-backup-timer.sh
 ```
 
+With the default `/etc/systemd/system` target the installer uses `sudo` for systemd writes and `systemctl`. The generated service runs as the current user unless `BACKUP_USER` and `BACKUP_GROUP` are set.
+
 Check timer state:
 
 ```bash
 systemctl list-timers october-backup.timer
 systemctl status october-backup.timer
-journalctl -u october-backup.service -n 100 --no-pager
+sudo journalctl -u october-backup.service -n 100 --no-pager
 ```
 
 Run the timer job manually:
 
 ```bash
-systemctl start october-backup.service
+sudo systemctl start october-backup.service
 ```
 
 Include `.env` and `auth.json` only when the backup location is protected:

@@ -201,6 +201,8 @@ Install the daily backup timer:
 BACKUP_DIR=/var/backups/october ./scripts/install-backup-timer.sh
 ```
 
+With the default `/etc/systemd/system` target the installer uses `sudo` for systemd writes and `systemctl`. The generated service still runs as the current user unless `BACKUP_USER` and `BACKUP_GROUP` are set.
+
 Preview old Docker image cleanup:
 
 ```bash

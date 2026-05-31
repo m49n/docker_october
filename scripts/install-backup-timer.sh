@@ -3,6 +3,7 @@ set -eu
 
 SYSTEMD_DIR="${SYSTEMD_DIR:-/etc/systemd/system}"
 SYSTEMCTL_BIN="${SYSTEMCTL_BIN:-systemctl}"
+SYSTEMCTL_USE_SUDO="${SYSTEMCTL_USE_SUDO:-auto}"
 BACKUP_PROJECT_DIR="${BACKUP_PROJECT_DIR:-$(pwd -P)}"
 BACKUP_DIR="${BACKUP_DIR:-/var/backups/october}"
 BACKUP_USER="${BACKUP_USER:-$(id -un)}"
@@ -33,6 +34,38 @@ run_privileged() {
         "$@"
     else
         sudo "$@"
+    fi
+}
+
+systemctl_needs_sudo() {
+    if [ "$(id -u)" = "0" ]; then
+        return 1
+    fi
+
+    case "$SYSTEMCTL_USE_SUDO" in
+        1|true|yes)
+            return 0
+            ;;
+        0|false|no)
+            return 1
+            ;;
+        auto)
+            [ "$SYSTEMCTL_BIN" = "systemctl" ] || return 1
+            [ "$SYSTEMD_DIR" = "/etc/systemd/system" ] || return 1
+            command -v sudo >/dev/null 2>&1 || return 1
+            return 0
+            ;;
+        *)
+            error "SYSTEMCTL_USE_SUDO must be auto, 1, or 0"
+            ;;
+    esac
+}
+
+run_systemctl() {
+    if systemctl_needs_sudo; then
+        sudo "$SYSTEMCTL_BIN" "$@"
+    else
+        "$SYSTEMCTL_BIN" "$@"
     fi
 }
 
@@ -127,12 +160,12 @@ EOF
 install_file "$service_file" "$SYSTEMD_DIR/$BACKUP_UNIT_NAME.service" 0644
 install_file "$timer_file" "$SYSTEMD_DIR/$BACKUP_UNIT_NAME.timer" 0644
 
-"$SYSTEMCTL_BIN" daemon-reload
+run_systemctl daemon-reload
 
 if [ "$BACKUP_ENABLE_TIMER" = "1" ]; then
-    "$SYSTEMCTL_BIN" enable --now "$BACKUP_UNIT_NAME.timer"
+    run_systemctl enable --now "$BACKUP_UNIT_NAME.timer"
 else
-    "$SYSTEMCTL_BIN" enable "$BACKUP_UNIT_NAME.timer"
+    run_systemctl enable "$BACKUP_UNIT_NAME.timer"
 fi
 
 echo "Installed $BACKUP_UNIT_NAME.service"
