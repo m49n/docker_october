@@ -61,6 +61,46 @@ BACKUP_INCLUDE_SECRETS=1 BACKUP_DIR=/var/backups/october USE_LOCAL_DB=1 ./script
 
 Store secret backups carefully: restrict permissions, encrypt them and move them off-server.
 
+## Daily Backup Timer
+
+Install a systemd timer on a single VPS:
+
+```bash
+cd /opt/october/app
+BACKUP_DIR=/var/backups/october ./scripts/install-backup-timer.sh
+```
+
+Defaults:
+
+- service: `october-backup.service`
+- timer: `october-backup.timer`
+- schedule: daily at `03:15` UTC with up to `15m` randomized delay
+- retention: keep the newest `14` files for each backup type
+- secrets: not included
+
+Customize the schedule:
+
+```bash
+BACKUP_ON_CALENDAR='*-*-* 02:30:00' \
+BACKUP_RANDOMIZED_DELAY_SEC=20m \
+BACKUP_RETENTION_COUNT=21 \
+./scripts/install-backup-timer.sh
+```
+
+Check the timer:
+
+```bash
+systemctl list-timers october-backup.timer
+systemctl status october-backup.timer
+journalctl -u october-backup.service -n 100 --no-pager
+```
+
+Run a manual timer job:
+
+```bash
+systemctl start october-backup.service
+```
+
 ## PostgreSQL Backup
 
 Create a compressed custom-format dump:

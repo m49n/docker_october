@@ -114,7 +114,7 @@ copy_dir_contents docs docs
 copy_dir_contents scripts scripts
 copy_dir_contents tests tests
 
-chmod +x scripts/deploy.sh scripts/update-kit.sh scripts/rollback.sh scripts/backup.sh scripts/prune-images.sh scripts/ci-deploy-over-ssh.sh scripts/telegram-notify.sh tests/*.sh 2>/dev/null || true
+chmod +x scripts/deploy.sh scripts/update-kit.sh scripts/rollback.sh scripts/backup.sh scripts/install-backup-timer.sh scripts/prune-images.sh scripts/ci-deploy-over-ssh.sh scripts/telegram-notify.sh tests/*.sh 2>/dev/null || true
 
 echo
 echo "Docker kit sync complete. Review changes before committing:"

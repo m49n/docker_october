@@ -137,6 +137,12 @@ BACKUP_DIR=/var/backups/october USE_LOCAL_DB=1 ./scripts/backup.sh
 
 The helper writes PostgreSQL, `storage-app` and metadata backups. It does not copy `.env` or `auth.json` unless `BACKUP_INCLUDE_SECRETS=1` is set.
 
+Install the daily systemd backup timer:
+
+```bash
+BACKUP_DIR=/var/backups/october ./scripts/install-backup-timer.sh
+```
+
 ## Health And Logs
 
 The compose file includes healthchecks for `nginx`, `php-fpm`, `redis` and bundled `postgres`.

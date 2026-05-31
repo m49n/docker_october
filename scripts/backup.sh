@@ -9,6 +9,7 @@ BACKUP_POSTGRES="${BACKUP_POSTGRES:-1}"
 BACKUP_STORAGE="${BACKUP_STORAGE:-1}"
 BACKUP_METADATA="${BACKUP_METADATA:-1}"
 BACKUP_INCLUDE_SECRETS="${BACKUP_INCLUDE_SECRETS:-0}"
+BACKUP_RETENTION_COUNT="${BACKUP_RETENTION_COUNT:-0}"
 STORAGE_VOLUME="${STORAGE_VOLUME:-october-production_storage-app}"
 
 error() {
@@ -38,6 +39,38 @@ compose() {
     else
         docker compose -f "$COMPOSE_FILE" "$@"
     fi
+}
+
+prune_backup_pattern() {
+    pattern="$1"
+
+    case "$BACKUP_RETENTION_COUNT" in
+        ''|*[!0-9]*)
+            error "BACKUP_RETENTION_COUNT must be a non-negative integer"
+            ;;
+    esac
+
+    if [ "$BACKUP_RETENTION_COUNT" = "0" ]; then
+        return
+    fi
+
+    # shellcheck disable=SC2086
+    set -- "$BACKUP_DIR"/$pattern
+    [ -e "$1" ] || return
+
+    # shellcheck disable=SC2086
+    ls -1t "$BACKUP_DIR"/$pattern | awk -v keep="$BACKUP_RETENTION_COUNT" 'NR > keep' | while IFS= read -r old_file; do
+        rm -f "$old_file"
+        echo "Removed old backup: $old_file"
+    done
+}
+
+prune_old_backups() {
+    prune_backup_pattern 'postgres-*.dump'
+    prune_backup_pattern 'storage-app-*.tar.gz'
+    prune_backup_pattern 'metadata-*.txt'
+    prune_backup_pattern 'env-*'
+    prune_backup_pattern 'auth-*.json'
 }
 
 postgres_db="$(get_env_value POSTGRES_DB)"
@@ -102,5 +135,7 @@ if [ "$BACKUP_INCLUDE_SECRETS" = "1" ]; then
         echo "Composer auth backup: $auth_file"
     fi
 fi
+
+prune_old_backups
 
 echo "Backup complete: $BACKUP_TAG"

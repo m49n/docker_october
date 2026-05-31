@@ -195,6 +195,12 @@ Create a backup:
 BACKUP_DIR=/var/backups/october USE_LOCAL_DB=1 ./scripts/backup.sh
 ```
 
+Install the daily backup timer:
+
+```bash
+BACKUP_DIR=/var/backups/october ./scripts/install-backup-timer.sh
+```
+
 Preview old Docker image cleanup:
 
 ```bash

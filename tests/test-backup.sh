@@ -98,7 +98,14 @@ export DOCKER_STUB_LOG="$tmp_dir/docker.log"
 export BACKUP_DIR="$backup_dir"
 export BACKUP_TAG="fixedtag"
 export BACKUP_INCLUDE_SECRETS=1
+export BACKUP_RETENTION_COUNT=1
 export PATH="$bin_dir:$PATH"
+
+printf 'OLD' > "$backup_dir/postgres-old.dump"
+printf 'OLD' > "$backup_dir/storage-app-old.tar.gz"
+printf 'OLD' > "$backup_dir/metadata-old.txt"
+printf 'OLD' > "$backup_dir/env-old"
+printf 'OLD' > "$backup_dir/auth-old.json"
 
 cd "$workspace"
 ./scripts/backup.sh >/tmp/backup.out
@@ -108,6 +115,11 @@ test -s "$backup_dir/storage-app-fixedtag.tar.gz" || fail "storage archive was n
 test -s "$backup_dir/metadata-fixedtag.txt" || fail "metadata was not created"
 test -s "$backup_dir/env-fixedtag" || fail "env backup was not created"
 test -s "$backup_dir/auth-fixedtag.json" || fail "auth backup was not created"
+test ! -e "$backup_dir/postgres-old.dump" || fail "old postgres backup was not pruned"
+test ! -e "$backup_dir/storage-app-old.tar.gz" || fail "old storage backup was not pruned"
+test ! -e "$backup_dir/metadata-old.txt" || fail "old metadata backup was not pruned"
+test ! -e "$backup_dir/env-old" || fail "old env backup was not pruned"
+test ! -e "$backup_dir/auth-old.json" || fail "old auth backup was not pruned"
 
 assert_file_contains "$backup_dir/postgres-fixedtag.dump" "PGDUMP"
 assert_file_contains "$backup_dir/metadata-fixedtag.txt" "git_commit=abc123def456"
