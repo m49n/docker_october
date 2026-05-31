@@ -1,6 +1,14 @@
 #!/usr/bin/env sh
 set -eu
 
+if [ "${UPDATE_KIT_RUNNING_COPY:-0}" != "1" ]; then
+    self_tmp_dir="$(mktemp -d)"
+    cp "$0" "$self_tmp_dir/update-kit.sh"
+    chmod +x "$self_tmp_dir/update-kit.sh"
+    UPDATE_KIT_RUNNING_COPY=1 UPDATE_KIT_RUNNING_COPY_DIR="$self_tmp_dir" exec "$self_tmp_dir/update-kit.sh" "$@"
+fi
+
+SELF_COPY_DIR="${UPDATE_KIT_RUNNING_COPY_DIR:-}"
 TEMPLATE_REPO="${TEMPLATE_REPO:-https://github.com/m49n/docker_october.git}"
 TEMPLATE_REF="${TEMPLATE_REF:-main}"
 ALLOW_DIRTY="${UPDATE_KIT_ALLOW_DIRTY:-0}"
@@ -30,6 +38,9 @@ fi
 tmp_dir="$(mktemp -d)"
 cleanup() {
     rm -rf "$tmp_dir"
+    if [ -n "$SELF_COPY_DIR" ]; then
+        rm -rf "$SELF_COPY_DIR"
+    fi
 }
 trap cleanup EXIT INT TERM
 
