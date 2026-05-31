@@ -13,7 +13,7 @@ git status --short
 ./scripts/update-kit.sh
 git diff --stat
 git diff
-git add Dockerfile docker-compose.prod.yml .dockerignore .gitattributes auth.json.example docker docs scripts
+git add Dockerfile docker-compose.prod.yml bitbucket-pipelines.yml .dockerignore .gitattributes auth.json.example docker docs scripts
 git commit -m "Update production Docker kit"
 git push
 ```
@@ -39,6 +39,7 @@ The default sync updates:
 - `.dockerignore`
 - `.gitattributes`
 - `auth.json.example`
+- `bitbucket-pipelines.yml` if it does not already exist
 - `docker/`
 - `docs/`
 - `scripts/`
@@ -57,6 +58,7 @@ Projects often customize these files, so the script does not overwrite them by d
 - `.env.example`
 - `.gitignore`
 - `README.md`
+- `bitbucket-pipelines.yml`
 
 Instead, refreshed template versions are written to:
 
@@ -64,6 +66,7 @@ Instead, refreshed template versions are written to:
 .env.example.docker-kit
 .gitignore.docker-kit
 README.docker-kit.md
+bitbucket-pipelines.docker-kit.yml
 ```
 
 Review and merge them manually when needed.
@@ -86,6 +89,12 @@ Overwrite `README.md`:
 
 ```bash
 UPDATE_KIT_INCLUDE_README=1 ./scripts/update-kit.sh
+```
+
+Overwrite `bitbucket-pipelines.yml`:
+
+```bash
+UPDATE_KIT_OVERWRITE_BITBUCKET_PIPELINE=1 ./scripts/update-kit.sh
 ```
 
 Allow running with tracked local changes:

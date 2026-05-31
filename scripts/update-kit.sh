@@ -7,6 +7,7 @@ ALLOW_DIRTY="${UPDATE_KIT_ALLOW_DIRTY:-0}"
 INCLUDE_README="${UPDATE_KIT_INCLUDE_README:-0}"
 OVERWRITE_ENV_EXAMPLE="${UPDATE_KIT_OVERWRITE_ENV_EXAMPLE:-0}"
 OVERWRITE_GITIGNORE="${UPDATE_KIT_OVERWRITE_GITIGNORE:-0}"
+OVERWRITE_BITBUCKET_PIPELINE="${UPDATE_KIT_OVERWRITE_BITBUCKET_PIPELINE:-0}"
 PRUNE_DOCKER_DIR="${UPDATE_KIT_PRUNE_DOCKER:-0}"
 
 if ! command -v git >/dev/null 2>&1; then
@@ -64,6 +65,13 @@ copy_file .dockerignore .dockerignore
 copy_file .gitattributes .gitattributes
 copy_file auth.json.example auth.json.example
 
+if [ "$OVERWRITE_BITBUCKET_PIPELINE" = "1" ] || [ ! -f bitbucket-pipelines.yml ]; then
+    copy_file bitbucket-pipelines.yml bitbucket-pipelines.yml
+else
+    copy_file bitbucket-pipelines.yml bitbucket-pipelines.docker-kit.yml
+    echo "Kept existing bitbucket-pipelines.yml; refreshed template saved as bitbucket-pipelines.docker-kit.yml"
+fi
+
 if [ "$OVERWRITE_ENV_EXAMPLE" = "1" ] || [ ! -f .env.example ]; then
     copy_file .env.example .env.example
 else
@@ -93,7 +101,7 @@ copy_dir_contents docker docker
 copy_dir_contents docs docs
 copy_dir_contents scripts scripts
 
-chmod +x scripts/deploy.sh scripts/update-kit.sh 2>/dev/null || true
+chmod +x scripts/deploy.sh scripts/update-kit.sh scripts/ci-deploy-over-ssh.sh scripts/telegram-notify.sh 2>/dev/null || true
 
 echo
 echo "Docker kit sync complete. Review changes before committing:"
