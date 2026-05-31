@@ -31,3 +31,5 @@ README.md
 docs
 scripts/deploy.sh
 scripts/update-kit.sh
+scripts/ci-deploy-over-ssh.sh
+scripts/telegram-notify.sh

@@ -1,0 +1,11 @@
+image: atlassian/default-image:4
+
+pipelines:
+  branches:
+    main:
+      - step:
+          name: Deploy production
+          deployment: production
+          script:
+            - chmod +x scripts/ci-deploy-over-ssh.sh scripts/telegram-notify.sh
+            - ./scripts/ci-deploy-over-ssh.sh

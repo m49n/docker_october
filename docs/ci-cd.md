@@ -12,6 +12,10 @@ Example `COMPOSER_AUTH` value:
 {"http-basic":{"gateway.octobercms.com":{"username":"account@example.com","password":"october-license-key"}}}
 ```
 
+## Bitbucket Pipelines
+
+For the single-server flow used by this kit, see [Bitbucket Pipelines Deployment](ci-cd-bitbucket.md). It deploys over SSH, builds images on the server and sends Telegram notifications.
+
 ## GitHub Actions Sketch
 
 ```yaml
