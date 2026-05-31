@@ -114,6 +114,7 @@ assert_file_contains "$backup_dir/metadata-fixedtag.txt" "git_commit=abc123def45
 assert_file_contains "$backup_dir/metadata-fixedtag.txt" "image_tag=testtag"
 assert_file_contains "$DOCKER_STUB_LOG" "docker compose -f docker-compose.prod.yml --profile local-db exec -T postgres pg_dump -U october_user -d october_db --format=custom --no-owner --no-acl"
 assert_file_contains "$DOCKER_STUB_LOG" "docker run --rm -v october-production_storage-app:/data:ro -v $backup_dir:/backup alpine:3.20"
+assert_file_contains "$DOCKER_STUB_LOG" "chown"
 assert_file_contains /tmp/backup.out "Backup complete: fixedtag"
 
 echo "backup tests passed"

@@ -65,6 +65,10 @@ if [ "$BACKUP_STORAGE" = "1" ]; then
         -v "$BACKUP_DIR:/backup" \
         alpine:3.20 \
         tar -czf "/backup/storage-app-$BACKUP_TAG.tar.gz" -C /data .
+    docker run --rm \
+        -v "$BACKUP_DIR:/backup" \
+        alpine:3.20 \
+        chown "$(id -u):$(id -g)" "/backup/storage-app-$BACKUP_TAG.tar.gz"
     test -s "$storage_file" || error "Storage backup is empty: $storage_file"
     chmod 600 "$storage_file"
     echo "Storage backup: $storage_file"
