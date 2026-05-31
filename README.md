@@ -21,6 +21,7 @@ The repository contains infrastructure files only. Install OctoberCMS in your pr
 - [Production Deployment](docs/production-deploy.md)
 - [Runtime Secrets](docs/runtime-secrets.md)
 - [Backup And Restore](docs/backup-restore.md)
+- [Rollback](docs/rollback.md)
 - [Updating The Docker Kit](docs/update-kit.md)
 - [CI/CD Notes](docs/ci-cd.md)
 - [Bitbucket Pipelines Deployment](docs/ci-cd-bitbucket.md)
@@ -174,6 +175,16 @@ RUN_OPTIMIZE=1 ./scripts/deploy.sh
 ```
 
 The script starts infrastructure services, runs `october:migrate --force`, optionally runs Laravel migrations and `artisan optimize`, signals queue and scheduler workers, then updates containers.
+
+## Rollback
+
+Switch back to a previously built image tag:
+
+```bash
+USE_LOCAL_DB=1 ./scripts/rollback.sh <previous-image-tag>
+```
+
+Rollback updates `IMAGE_TAG`, recreates services and waits for `php-fpm` and `nginx`. It does not roll back database migrations or content. See [Rollback](docs/rollback.md).
 
 ## Updating This Kit In Projects
 

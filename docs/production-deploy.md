@@ -97,6 +97,16 @@ If the project also has Laravel migrations:
 docker compose -f docker-compose.prod.yml run --rm php-fpm php artisan migrate --force
 ```
 
+## Rollback
+
+To switch back to a previously built app/nginx image tag:
+
+```bash
+USE_LOCAL_DB=1 ./scripts/rollback.sh <previous-image-tag>
+```
+
+The rollback helper updates `IMAGE_TAG`, recreates services and waits for `php-fpm` and `nginx`. It does not run migrations and does not revert database changes. See [Rollback](rollback.md).
+
 ## Scaling
 
 Scale PHP-FPM and queue workers:

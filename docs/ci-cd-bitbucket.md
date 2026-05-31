@@ -179,6 +179,17 @@ DEPLOY_USE_LOCAL_DB=1 \
 
 Then push to `main` and check the Bitbucket pipeline log.
 
+## Emergency Rollback
+
+This pipeline deploys the latest `main` commit. For a fast rollback to an already built image, run the server-side rollback helper:
+
+```bash
+cd /opt/october/app
+USE_LOCAL_DB=1 ./scripts/rollback.sh <previous-image-tag>
+```
+
+See [Rollback](rollback.md) for limits and verification steps.
+
 ## References
 
 - Bitbucket Pipelines getting started: https://support.atlassian.com/bitbucket-cloud/docs/get-started-with-bitbucket-pipelines/

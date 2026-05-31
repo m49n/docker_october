@@ -13,7 +13,7 @@ git status --short
 ./scripts/update-kit.sh
 git diff --stat
 git diff
-git add Dockerfile docker-compose.prod.yml bitbucket-pipelines.yml gitlab-ci.example.yml .dockerignore .gitattributes auth.json.example docker docs scripts
+git add Dockerfile docker-compose.prod.yml bitbucket-pipelines.yml gitlab-ci.example.yml .dockerignore .gitattributes auth.json.example docker docs scripts tests
 git commit -m "Update production Docker kit"
 git push
 ```
@@ -44,6 +44,7 @@ The default sync updates:
 - `docker/`
 - `docs/`
 - `scripts/`
+- `tests/`
 
 The script does not touch real secrets:
 

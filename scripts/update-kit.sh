@@ -112,8 +112,9 @@ fi
 copy_dir_contents docker docker
 copy_dir_contents docs docs
 copy_dir_contents scripts scripts
+copy_dir_contents tests tests
 
-chmod +x scripts/deploy.sh scripts/update-kit.sh scripts/ci-deploy-over-ssh.sh scripts/telegram-notify.sh 2>/dev/null || true
+chmod +x scripts/deploy.sh scripts/update-kit.sh scripts/rollback.sh scripts/ci-deploy-over-ssh.sh scripts/telegram-notify.sh tests/*.sh 2>/dev/null || true
 
 echo
 echo "Docker kit sync complete. Review changes before committing:"

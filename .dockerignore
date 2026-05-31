@@ -32,7 +32,9 @@ gitlab-ci.example.yml
 .gitlab-ci.yml
 README.md
 docs
+tests
 scripts/deploy.sh
 scripts/update-kit.sh
+scripts/rollback.sh
 scripts/ci-deploy-over-ssh.sh
 scripts/telegram-notify.sh

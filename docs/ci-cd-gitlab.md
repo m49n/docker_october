@@ -234,6 +234,17 @@ Then push to the default branch and check:
 Project -> Build -> Pipelines
 ```
 
+## Emergency Rollback
+
+This pipeline deploys the latest default branch commit. For a fast rollback to an already built image, run the server-side rollback helper:
+
+```bash
+cd /opt/october/app
+USE_LOCAL_DB=1 ./scripts/rollback.sh <previous-image-tag>
+```
+
+See [Rollback](rollback.md) for limits and verification steps.
+
 ## References
 
 - GitLab CI/CD variables: https://docs.gitlab.com/ci/variables/
