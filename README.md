@@ -22,6 +22,7 @@ The repository contains infrastructure files only. Install OctoberCMS in your pr
 - [Runtime Secrets](docs/runtime-secrets.md)
 - [Backup And Restore](docs/backup-restore.md)
 - [Rollback](docs/rollback.md)
+- [Operations](docs/operations.md)
 - [Updating The Docker Kit](docs/update-kit.md)
 - [CI/CD Notes](docs/ci-cd.md)
 - [Bitbucket Pipelines Deployment](docs/ci-cd-bitbucket.md)
@@ -185,6 +186,28 @@ USE_LOCAL_DB=1 ./scripts/rollback.sh <previous-image-tag>
 ```
 
 Rollback updates `IMAGE_TAG`, recreates services and waits for `php-fpm` and `nginx`. It does not roll back database migrations or content. See [Rollback](docs/rollback.md).
+
+## Operations
+
+Create a backup:
+
+```bash
+BACKUP_DIR=/var/backups/october USE_LOCAL_DB=1 ./scripts/backup.sh
+```
+
+Preview old Docker image cleanup:
+
+```bash
+IMAGE_KEEP_COUNT=5 ./scripts/prune-images.sh
+```
+
+Apply cleanup:
+
+```bash
+IMAGE_KEEP_COUNT=5 IMAGE_PRUNE_DRY_RUN=0 ./scripts/prune-images.sh
+```
+
+See [Operations](docs/operations.md) for common production commands.
 
 ## Updating This Kit In Projects
 

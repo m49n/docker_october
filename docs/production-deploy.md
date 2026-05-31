@@ -127,6 +127,16 @@ The compose file mounts `storage-app` read-only into `nginx`, so local public me
 
 Before going live, configure and test backups for PostgreSQL, `storage-app` and runtime secrets. See [Backup And Restore](backup-restore.md).
 
+## Backup
+
+Create an on-demand backup on the server:
+
+```bash
+BACKUP_DIR=/var/backups/october USE_LOCAL_DB=1 ./scripts/backup.sh
+```
+
+The helper writes PostgreSQL, `storage-app` and metadata backups. It does not copy `.env` or `auth.json` unless `BACKUP_INCLUDE_SECRETS=1` is set.
+
 ## Health And Logs
 
 The compose file includes healthchecks for `nginx`, `php-fpm`, `redis` and bundled `postgres`.

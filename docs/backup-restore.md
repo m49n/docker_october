@@ -38,6 +38,29 @@ export BACKUP_DIR=/var/backups/october
 export BACKUP_TAG=$(date -u +%Y%m%dT%H%M%SZ)
 ```
 
+## Automated Backup
+
+Use the helper script for the bundled single-server setup:
+
+```bash
+cd /opt/october/app
+BACKUP_DIR=/var/backups/october USE_LOCAL_DB=1 ./scripts/backup.sh
+```
+
+The script creates:
+
+- `postgres-<tag>.dump`
+- `storage-app-<tag>.tar.gz`
+- `metadata-<tag>.txt`
+
+Secrets are not copied by default. To include `.env` and `auth.json` in the backup directory:
+
+```bash
+BACKUP_INCLUDE_SECRETS=1 BACKUP_DIR=/var/backups/october USE_LOCAL_DB=1 ./scripts/backup.sh
+```
+
+Store secret backups carefully: restrict permissions, encrypt them and move them off-server.
+
 ## PostgreSQL Backup
 
 Create a compressed custom-format dump:
